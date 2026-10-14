@@ -101,7 +101,6 @@ class handler(BaseHTTPRequestHandler):
             self.wfile.write(data)
             return
 
-        # 404 Fallback
         self.send_response(404)
         self.end_headers()
         self.wfile.write(b"File not found")
