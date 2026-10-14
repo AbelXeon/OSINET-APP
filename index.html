@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OSINT // CONSOLE</title>
+  <link rel="manifest" href="/public/manifest.json">
+  <meta name="theme-color" content="#000000">
+  <style>
+    :root {
+      --bg: #F4F0EA;
+      --card-bg: #FFFFFF;
+      --accent: #FFE600;
+      --primary: #000000;
+      --border-w: 4px;
+      --shadow-offset: 6px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Courier New', Courier, monospace;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--primary);
+      padding: 24px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 850px;
+    }
+
+    /* Neo-Brutalist Box Utility */
+    .brutal-box {
+      background: var(--card-bg);
+      border: var(--border-w) solid var(--primary);
+      box-shadow: var(--shadow-offset) var(--shadow-offset) 0px var(--primary);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    header {
+      background: var(--accent);
+      text-transform: uppercase;
+      font-weight: 900;
+      letter-spacing: -1px;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      line-height: 1.1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .badge {
+      font-size: 0.9rem;
+      background: #000;
+      color: #FFF;
+      padding: 4px 8px;
+      vertical-align: middle;
+    }
+
+    /* Tool Selector Grid */
+    .tool-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .btn-tool {
+      background: #FFF;
+      border: 3px solid var(--primary);
+      box-shadow: 3px 3px 0px var(--primary);
+      padding: 12px 8px;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.1s ease;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+    }
+
+    .btn-tool:hover {
+      background: #E0E0E0;
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0px var(--primary);
+    }
+
+    .btn-tool.active {
+      background: var(--accent);
+      box-shadow: inset 2px 2px 0px var(--primary);
+      transform: translate(2px, 2px);
+    }
+
+    /* Execution Form */
+    .input-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      border: 3px solid var(--primary);
+      padding: 12px;
+      font-size: 1rem;
+      font-weight: bold;
+      outline: none;
+      background: #FFF;
+    }
+
+    input[type="text"]:focus {
+      background: #FFFFF0;
+    }
+
+    .btn-exec {
+      background: #FF5C5C;
+      color: #000;
+      font-weight: 900;
+      border: 3px solid var(--primary);
+      box-shadow: 4px 4px 0px var(--primary);
+      padding: 0 24px;
+      cursor: pointer;
+      text-transform: uppercase;
+      font-size: 1rem;
+    }
+
+    .btn-exec:active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0px var(--primary);
+    }
+
+    /* Terminal Console Output */
+    .console-out {
+      background: #000;
+      color: #00FF66;
+      border: var(--border-w) solid var(--primary);
+      box-shadow: var(--shadow-offset) var(--shadow-offset) 0px var(--primary);
+      padding: 16px;
+      min-height: 200px;
+      max-height: 480px;
+      overflow-y: auto;
+      font-size: 0.85rem;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .links-tray {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .link-tag {
+      background: #FFF;
+      color: #000;
+      text-decoration: none;
+      border: 2px solid #000;
+      padding: 4px 8px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      box-shadow: 2px 2px 0px #000;
+    }
+
+    .link-tag:hover {
+      background: var(--accent);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header class="brutal-box">
+    <h1>
+      <span>[OSINT::RAW]</span>
+      <span class="badge">PWA V1</span>
+    </h1>
+  </header>
+
+  <div class="tool-grid">
+    <button class="btn-tool active" data-tool="ip" onclick="setTool('ip', '8.8.8.8')">📡 IP</button>
+    <button class="btn-tool" data-tool="domain" onclick="setTool('domain', 'example.com')">🌐 Domain</button>
+    <button class="btn-tool" data-tool="phone" onclick="setTool('phone', '+251911234567')">📱 Phone</button>
+    <button class="btn-tool" data-tool="dork" onclick="setTool('dork', 'target')">🕵️ Dork</button>
+  </div>
+
+  <section class="brutal-box">
+    <label id="input-label" style="font-weight: bold; text-transform: uppercase;">TARGET IDENTIFIER</label>
+    <div class="input-group">
+      <input type="text" id="target-input" placeholder="8.8.8.8" autocomplete="off" autocorrect="off">
+      <button class="btn-exec" onclick="runScan()">EXECUTE</button>
+    </div>
+  </section>
+
+  <section>
+    <div style="font-weight: 900; margin-bottom: 8px;">OUTPUT BUFFER</div>
+    <div class="console-out" id="terminal">&gt; Console ready. Select tool and execute target lookup...</div>
+    <div class="links-tray" id="links-container"></div>
+  </section>
+</div>
+
+<script>
+  let currentTool = 'ip';
+
+  function setTool(tool, sample) {
+    currentTool = tool;
+    document.querySelectorAll('.btn-tool').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.tool === tool);
+    });
+    const input = document.getElementById('target-input');
+    input.placeholder = sample;
+    document.getElementById('input-label').innerText = `${tool.toUpperCase()} TARGET ENTRY`;
+  }
+
+  async function runScan() {
+    const target = document.getElementById('target-input').value.trim() || document.getElementById('target-input').placeholder;
+    const term = document.getElementById('terminal');
+    const tray = document.getElementById('links-container');
+    tray.innerHTML = '';
+
+    term.innerText = `> Querying [${currentTool.toUpperCase()}] against target: "${target}"...\n> Connecting to API edge...`;
+
+    try {
+      const res = await fetch(`/api?tool=${encodeURIComponent(currentTool)}&target=${encodeURIComponent(target)}`);
+      if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+      const data = await res.json();
+      term.innerText = JSON.stringify(data, null, 2);
+
+      // Dynamically add quick external buttons
+      if (currentTool === 'ip') {
+        renderLink("🗺️ View Map", `https://www.google.com/maps?q=${target}`);
+        renderLink("🔍 Shodan", `https://www.shodan.io/host/${target}`);
+      } else if (currentTool === 'domain') {
+        renderLink("🛡️ VirusTotal", `https://www.virustotal.com/gui/domain/${target}`);
+        renderLink("🕰️ Wayback", `https://web.archive.org/web/*/${target}`);
+      }
+    } catch (err) {
+      term.innerText = `[!] TASK FAILED\n${err.message}`;
+    }
+  }
+
+  function renderLink(name, url) {
+    const a = document.createElement('a');
+    a.className = 'link-tag';
+    a.innerText = name;
+    a.href = url;
+    a.target = '_blank';
+    document.getElementById('links-container').appendChild(a);
+  }
+
+  // Register PWA Service Worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/public/sw.js')
+        .catch(err => console.log('SW registration failed: ', err));
+    });
+  }
+</script>
+
+</body>
+</html>
