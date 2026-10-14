@@ -76,7 +76,19 @@ class handler(BaseHTTPRequestHandler):
             self.wfile.write(json.dumps(res).encode())
             return
 
-        # 2. STATIC FILES & DASHBOARD (Root, Manifest, SW, Icons)
+        # 2. DIGITAL ASSET LINKS FOR PWA FULLSCREEN (.well-known)
+        if clean_path == ".well-known/assetlinks.json":
+            data = read_static(".well-known/assetlinks.json")
+            if data:
+                self.send_response(200)
+                self._send_cors()
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(data)))
+                self.end_headers()
+                self.wfile.write(data)
+                return
+
+        # 3. STATIC FILES & DASHBOARD (Root, Manifest, SW, Icons)
         file_name = clean_path if clean_path else "index.html"
         data = read_static(file_name)
 

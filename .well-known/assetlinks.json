@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "app.vercel.osinet_app.twa",
+        "sha256_cert_fingerprints": ["6E:D7:83:0B:A2:A7:A1:D7:65:EE:BE:1E:21:9C:9C:E1:17:FF:DD:CC:B6:E8:09:48:35:C7:F4:A2:5D:7A:67:FF"]
+      }
+    }]
