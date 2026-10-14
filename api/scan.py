@@ -1,22 +1,22 @@
 import json
-import re
 import ipaddress
 from http.server import BaseHTTPRequestHandler
 from urllib.parse import parse_qs, urlparse
+from pathlib import Path
 import dns.resolver
 import phonenumbers
 from phonenumbers import geocoder, carrier
 import requests
 
 class handler(BaseHTTPRequestHandler):
-    def _send_cors_headers(self):
+    def _send_cors(self):
         self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Methods", "GET, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
 
     def do_OPTIONS(self):
         self.send_response(204)
-        self._send_cors_headers()
+        self._send_cors()
         self.end_headers()
 
     def do_GET(self):
@@ -25,12 +25,17 @@ class handler(BaseHTTPRequestHandler):
         tool = params.get("tool", [""])[0].lower()
         target = params.get("target", [""])[0].strip()
 
+        # If accessed without parameters, return a clean status check
         if not tool or not target:
-            self.send_response(400)
-            self._send_cors_headers()
+            self.send_response(200)
+            self._send_cors()
             self.send_header("Content-Type", "application/json")
             self.end_headers()
-            self.wfile.write(json.dumps({"error": "Missing 'tool' or 'target' query parameters"}).encode())
+            self.wfile.write(json.dumps({
+                "service": "OSINT API",
+                "status": "online",
+                "usage": "/api/scan?tool=ip&target=8.8.8.8"
+            }).encode())
             return
 
         result = {}
@@ -44,14 +49,13 @@ class handler(BaseHTTPRequestHandler):
             elif tool == "dork":
                 result = self._build_dorks(target)
             else:
-                result = {"status": "unsupported", "message": f"Tool '{tool}' not routed or handled locally."}
-
+                result = {"status": "unsupported", "tool": tool}
             self.send_response(200)
         except Exception as e:
             self.send_response(500)
             result = {"error": str(e)}
 
-        self._send_cors_headers()
+        self._send_cors()
         self.send_header("Content-Type", "application/json")
         self.end_headers()
         self.wfile.write(json.dumps(result).encode())
@@ -59,7 +63,7 @@ class handler(BaseHTTPRequestHandler):
     def _scan_ip(self, ip_str):
         addr = ipaddress.ip_address(ip_str)
         if addr.is_private or addr.is_reserved:
-            return {"status": "Private/Reserved IP"}
+            return {"status": "Private or Reserved IP"}
         
         geo = requests.get(f"http://ip-api.com/json/{ip_str}?fields=status,country,regionName,city,isp,org,as,query", timeout=8).json()
         idb = requests.get(f"https://internetdb.shodan.io/{ip_str}", timeout=8).json()
