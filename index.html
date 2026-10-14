@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OSINT // CONSOLE</title>
-  <link rel="manifest" href="/public/manifest.json">
+  <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#000000">
   <style>
     :root {
@@ -232,7 +232,7 @@
     term.innerText = `> Querying [${currentTool.toUpperCase()}] against target: "${target}"...\n> Connecting to API edge...`;
 
     try {
-      const res = await fetch(`/api?tool=${encodeURIComponent(currentTool)}&target=${encodeURIComponent(target)}`);
+      const res = await fetch(`/api/scan?tool=${encodeURIComponent(currentTool)}&target=${encodeURIComponent(target)}`);
       if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
       const data = await res.json();
       term.innerText = JSON.stringify(data, null, 2);
@@ -262,7 +262,7 @@
   // Register PWA Service Worker
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/public/sw.js')
+      navigator.serviceWorker.register('/sw.js')
         .catch(err => console.log('SW registration failed: ', err));
     });
   }
