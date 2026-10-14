@@ -1,2 +1,2 @@
 [tool.vercel]
-entrypoint = "scan.py:handler"
+entrypoint = "scan:handler"
