@@ -3,11 +3,11 @@
   "rewrites": [
     {
       "source": "/api",
-      "destination": "/api/index.py"
+      "destination": "/api/scan.py"
     },
     {
       "source": "/api/(.*)",
-      "destination": "/api/index.py"
+      "destination": "/api/scan.py"
     }
   ]
 }
