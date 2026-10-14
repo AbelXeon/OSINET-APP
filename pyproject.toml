@@ -1,2 +1,13 @@
+[project]
+name = "osinet-app"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = [
+    "phonenumbers>=8.13",
+    "dnspython>=2.6",
+    "python-whois>=0.9",
+    "requests>=2.31.0",
+]
+
 [tool.vercel]
 entrypoint = "scan:handler"
